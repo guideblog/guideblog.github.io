@@ -10,13 +10,13 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="[不蒜子](https://busuanzi.ibruce.info/)是一个极简网页计数器，很多同学都希望有这个功能，所以这个插件就来了。">
-<meta property="og:title" content="插件功能的使用">
-<meta property="og:description" content="[不蒜子](https://busuanzi.ibruce.info/)是一个极简网页计数器，很多同学都希望有这个功能，所以这个插件就来了。">
+<meta name="description" content="需要在docs文件内上传一些自己的文件，比如图片、js、css等，所以在v2.20版本添加了这个功能。">
+<meta property="og:title" content="Gmeek进阶--static文件夹使用">
+<meta property="og:description" content="需要在docs文件内上传一些自己的文件，比如图片、js、css等，所以在v2.20版本添加了这个功能。">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://guideblog.github.io/post/cha-jian-gong-neng-de-shi-yong.html">
+<meta property="og:url" content="https://guideblog.github.io/post/Gmeek-jin-jie---static-wen-jian-jia-shi-yong.html">
 <meta property="og:image" content="https://github.githubassets.com/favicons/favicon.svg">
-<title>插件功能的使用</title>
+<title>Gmeek进阶--static文件夹使用</title>
 
 
 
@@ -49,7 +49,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 
 <body>
     <div id="header">
-<h1 class="postTitle">插件功能的使用</h1>
+<h1 class="postTitle">Gmeek进阶--static文件夹使用</h1>
 <div class="title-right">
     <a href="https://guideblog.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
         <svg class="octicon" width="16" height="16">
@@ -57,7 +57,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
         </svg>
     </a>
     
-    <a href="https://github.com/guideblog/guideblog.github.io/issues/1" target="_blank" class="btn btn-invisible circle" title="Issue">
+    <a href="https://github.com/guideblog/guideblog.github.io/issues/3" target="_blank" class="btn btn-invisible circle" title="Issue">
         <svg class="octicon" width="16" height="16">
             <path id="pathIssue" fill-rule="evenodd"></path>
         </svg>
@@ -73,16 +73,22 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><p><a href="https://busuanzi.ibruce.info/" rel="nofollow">不蒜子</a>是一个极简网页计数器，很多同学都希望有这个功能，所以这个插件就来了。<br>
-目前更推荐使用下面的   Vercount插件</p>
+<div class="markdown-body" id="postBody"><p>需要在docs文件内上传一些自己的文件，比如图片、js、css等，所以在v2.20版本添加了这个功能。下面就简单说明一下使用方法。</p>
 <blockquote>
-<p>全站添加不蒜子，只需要在config.json文件内添加配置<br>
-<code class="notranslate">&gt; "allHead":"&lt;script src='https://blog.meekdai.com/Gmeek/plugins/GmeekBSZ.js'&gt;&lt;/script&gt;",</code><br>
-单个文章页添加不蒜子，只需要在文章最后一行添加如下</p>
-
+<p>使用方式</p>
 </blockquote>
+<p>在自己的仓库根目录下新建一个文件夹，名称必须是static。<br>
+然后在static文件内上传一些自己的文件，比如avatar.svg文件。<br>
+通过手动全局生成一次成功后，你就可以通过 xxx.github.io/avatar.svg 访问了。</p>
 <blockquote>
-</blockquote></div>
+<p>例子</p>
+</blockquote>
+<p>我新建的<a href="https://github.com/Meekdai/meekdai.github.io/tree/main/static">static文件夹</a><br>
+通过链接访问static文件夹内的文件：<a href="https://meekdai.github.io/avatar.svg" rel="nofollow">https://meekdai.github.io/avatar.svg</a></p>
+<blockquote>
+<p>备注</p>
+</blockquote>
+<p>在全局生成的时候，Actions会自动把static文件夹的所有内容拷贝到docs文件夹内。方便用户把docs当成一个目录部署到CF等其他服务器中。</p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
@@ -141,7 +147,11 @@ console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 
 <script>
 document.getElementById("pathHome").setAttribute("d",IconList["home"]);
 document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
-
+cmButton=document.getElementById("cmButton");
+    span=document.createElement("span");
+    span.setAttribute("class","Counter");
+    span.innerHTML="1";
+    cmButton.appendChild(span);
 
 
 function openComments(){
@@ -183,6 +193,6 @@ function iFrameLoading(){
 
 
 </script>
-<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script><script src='https://blog.meekdai.com/Gmeek/plugins/GmeekBSZ.js'></script>
+<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>
 
 </html>
