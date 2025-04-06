@@ -7,8 +7,27 @@
     "displayTitle":"guide-blog",
     "homeUrl":"https://guideblog.github.io",
 
+    "script":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>",
+    "allHead":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js'></script>",
+
+// configvote.json
+
+    "voteConfig": {
+        "container": "#mainVoteContainer",
+        "dataUrl": "/api/vote-data",
+        "colors": ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4"],
+        "barHeight": "32px",
+        "showNumbers": true,
+        "refreshInterval": 10000,
+        "animation": {
+            "duration": 0.6,
+            "easing": "cubic-bezier(0.22, 0.61, 0.36, 1)"
+                    },
+        "responsive": {
+            "mobileBreakpoint": 768,
+            "mobileBarHeight": "24px"
+                        }
+    }
 
     
-    "script":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>",
-    "allHead":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js'></script>"
 }
