@@ -1,120 +1,126 @@
 // vote.js
-(function() {
-    'use strict';
-    
-    class VoteBarPlugin {
-        constructor(config) {
-            this.config = Object.assign({
-                containerSelector: '#voteContainer',
-                dataUrl: './data.json',
-                colors: ['#ff6b6b', '#4ecdc4', '#45b7d1'],
-                barHeight: '25px',
-                showNumbers: true,
-                refreshInterval: 0
-            }, config);
+Gmeek.component('vote-bar', {
+    template: `
+        <div class="gmeek-vote-container">
+            <div class="vote-item" v-for="(item, index) in processedData" :key="index">
+                <div class="vote-label">
+                    <span>{{ item.label }}</span>
+                    <span v-if="config.showNumbers">
+                        {{ item.value }} ({{ item.percentage.toFixed(1) }}%)
+                    </span>
+                </div>
+                <div class="vote-bar">
+                    <div class="vote-fill" 
+                         :style="{
+                             width: item.percentage + '%',
+                             backgroundColor: config.colors[index % config.colors.length]
+                         }">
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
 
-            this.container = document.querySelector(this.config.containerSelector);
-            this.initStyles();
-            this.init();
-        }
+    config: {
+        container: '#voteContainer',
+        dataUrl: './data.json',
+        colors: ['#FF6B6B', '#4ECDC4', '#45B7D1'],
+        barHeight: '28px',
+        showNumbers: true,
+        refreshInterval: 5000
+    },
 
-        initStyles() {
-            const style = document.createElement('style');
-            style.textContent = `
-                .vote-container {
+    init() {
+        this.processedData = []
+        this.total = 0
+        this.setupStyles()
+        this.startPolling()
+    },
+
+    async mounted() {
+        await this.loadData()
+    },
+
+    methods: {
+        async loadData() {
+            try {
+                const response = await Gmeek.http.get(this.config.dataUrl)
+                this.calculatePercentages(response.data)
+            } catch (error) {
+                console.error('[Gmeek Vote] Data load failed:', error)
+            }
+        },
+
+        calculatePercentages(rawData) {
+            this.total = rawData.reduce((sum, item) => sum + item.value, 0)
+            this.processedData = rawData.map(item => ({
+                ...item,
+                percentage: this.total > 0 ? (item.value / this.total) * 100 : 0
+            }))
+        },
+
+        setupStyles() {
+            const styles = `
+                .gmeek-vote-container {
                     width: 100%;
-                    max-width: 600px;
+                    max-width: 800px;
                     margin: 20px auto;
-                    font-family: Arial, sans-serif;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
                 }
+
                 .vote-item {
-                    margin: 15px 0;
+                    margin: 18px 0;
                 }
+
                 .vote-label {
                     display: flex;
                     justify-content: space-between;
                     margin-bottom: 8px;
                     font-size: 14px;
+                    color: #666;
                 }
+
                 .vote-bar {
-                    background-color: #f0f0f0;
+                    background-color: #f8f9fa;
                     height: ${this.config.barHeight};
-                    border-radius: 10px;
+                    border-radius: 12px;
                     overflow: hidden;
+                    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
                 }
+
                 .vote-fill {
                     height: 100%;
-                    transition: width 0.5s ease-in-out;
+                    transition: width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+                    position: relative;
                 }
-            `;
-            document.head.appendChild(style);
-        }
 
-        async fetchData() {
-            try {
-                const response = await fetch(this.config.dataUrl);
-                return await response.json();
-            } catch (error) {
-                console.error('Failed to fetch voting data:', error);
-                return [];
-            }
-        }
+                .vote-fill::after {
+                    content: "";
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    bottom: 0;
+                    width: 4px;
+                    background: linear-gradient(90deg, 
+                        rgba(255,255,255,0.3) 0%, 
+                        rgba(255,255,255,0.15) 100%);
+                }
+            `
 
-        calculatePercentages(data) {
-            const total = data.reduce((sum, item) => sum + item.value, 0);
-            return data.map(item => ({
-                ...item,
-                percentage: total > 0 ? (item.value / total) * 100 : 0
-            }));
-        }
+            Gmeek.style.inject('gmeek-vote-styles', styles)
+        },
 
-        async render() {
-            const rawData = await this.fetchData();
-            const data = this.calculatePercentages(rawData);
-            
-            this.container.innerHTML = data.map((item, index) => `
-                <div class="vote-item">
-                    <div class="vote-label">
-                        <span>${item.label}</span>
-                        ${this.config.showNumbers ? 
-                            `<span>${item.value} (${item.percentage.toFixed(1)}%)</span>` : ''}
-                    </div>
-                    <div class="vote-bar">
-                        <div class="vote-fill" 
-                             style="width: ${item.percentage}%;
-                                    background-color: ${this.config.colors[index % this.config.colors.length]};">
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
+        startPolling() {
             if (this.config.refreshInterval > 0) {
-                this.startAutoRefresh();
+                this.polling = setInterval(() => {
+                    this.loadData()
+                }, this.config.refreshInterval)
             }
         }
+    },
 
-        startAutoRefresh() {
-            if (this.intervalId) clearInterval(this.intervalId);
-            this.intervalId = setInterval(() => this.render(), this.config.refreshInterval);
-        }
-
-        async init() {
-            await this.render();
-        }
+    beforeUnmount() {
+        clearInterval(this.polling)
+        Gmeek.style.remove('gmeek-vote-styles')
     }
-
-    // 自动初始化
-    fetch('./config.json')
-        .then(response => response.json())
-        .then(config => {
-            if (!document.querySelector(config.containerSelector)) {
-                const container = document.createElement('div');
-                container.id = config.containerSelector.replace('#', '');
-                document.body.appendChild(container);
-            }
-            new VoteBarPlugin(config);
-        })
-        .catch(error => console.error('Failed to load config:', error));
-
-})();
-
+})
