@@ -7,14 +7,7 @@
     "displayTitle":"guide-blog",
     "homeUrl":"https://guideblog.github.io",
 
-    "script":"<script src='./vote.js'></script>",
-    "containerSelector": "#voteContainer",
-    "dataUrl": "./data.json",
-    "colors": ["#FF6B6B", "#4ECDC4", "#45B7D1"],
-    "barHeight": "28px",
-    "showNumbers": true,
-    "refreshInterval": 5000,
-    
+
     
     "script":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekTOC.js'></script>",
     "allHead":"<script src='https://blog.meekdai.com/Gmeek/plugins/GmeekVercount.js'></script>"
